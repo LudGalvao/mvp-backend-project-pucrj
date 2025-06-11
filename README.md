@@ -4,3 +4,7 @@
 ```
 python create_db.py
 ```
+## Roda a aplicação flask
+```
+uvicorn app:app --reload
+```
