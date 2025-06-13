@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from sqlalchemy import Boolean, DateTime ,Column, ForeignKey, Integer
+from sqlalchemy import Boolean, DateTime, Column, ForeignKey, Integer, Index
 from models.base import Base
 
 class Exercicios_ativos(Base):
@@ -11,6 +11,12 @@ class Exercicios_ativos(Base):
     data_inicio = Column(DateTime, nullable=False)
     concluido = Column(Boolean, nullable=False)
     data_conclusao = Column(DateTime, nullable=True)
+
+    # Adicionando índices
+    __table_args__ = (
+        Index('idx_exercicios_ativos_exercicio_id', 'exercicio_id'),
+        Index('idx_exercicios_ativos_concluido', 'concluido'),
+    )
 
     def __init__(self, exercicio_id:int, data_inicio: Optional[datetime] = None, concluido:bool = False,
                   data_conclusao: Optional[datetime] = None):
