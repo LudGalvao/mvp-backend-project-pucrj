@@ -1,34 +1,49 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import func
-from models.exercicios_ativos import Exercicios_ativos
-from models.exercicios_historico import Exercicios_historicos
 from models.exercicios import Exercicios
+from models.exercicios_historico import Exercicios_historicos
 from database.session import get_db
 from datetime import datetime
 
 router = APIRouter()
 
-@router.patch("/exercicios-ativos/concluidos")
-def concluir_exercicios_ativos(id: int, db: Session = Depends(get_db)):
-    ativo = db.query(Exercicios_ativos).filter(Exercicios_ativos.id == id, Exercicios_ativos.concluido == False).first()
-    if not ativo:
-        raise HTTPException(status_code=404, detail="Exercicio ativo não encontrado")
-    ativo.concluido = True
-    ativo.data_conclusao = datetime.now()
+@router.patch("/exercicios/concluir/{id}")
+def concluir_exercicio(id: int, db: Session = Depends(get_db)):
+    # Busca o exercício ativo
+    exercicio = db.query(Exercicios).filter(Exercicios.id == id, Exercicios.exercicio_ativo == True).first()
+    if not exercicio:
+        raise HTTPException(status_code=404, detail="Exercício ativo não encontrado")
+    
+    # Marca o exercício como concluído
+    exercicio.exercicio_ativo = False
+    
+    # Registra no histórico
     historico = Exercicios_historicos(
-        exercicio_id=ativo.exercicio_id,
-        data_inicio=ativo.data_inicio,
-        data_conclusao=ativo.data_conclusao
+        exercicio_id=exercicio.id,
+        data_inicio=datetime.now(),  # Data atual como início
+        data_conclusao=datetime.now()  # Data atual como conclusão
     )
     db.add(historico)
-    db.commit()
-
-    novo_exercicio = db.query(Exercicios).order_by(func.random()).first()
+    
+    # Busca um novo exercício aleatório que não esteja ativo
+    novo_exercicio = db.query(Exercicios).filter(
+        Exercicios.exercicio_ativo == False,
+        Exercicios.id != id  # Evita selecionar o mesmo exercício
+    ).order_by(func.random()).first()
+    
     if novo_exercicio:
-        novo_ativo = Exercicios_ativos(exercicio_id=novo_exercicio.id)
-        db.add(novo_ativo)
+        # Marca o novo exercício como ativo
+        novo_exercicio.exercicio_ativo = True
         db.commit()
-        db.refresh(novo_ativo)
-        return {"msg": "Concluído e novo desafio criado", "novo_desafio_id": novo_ativo.id}
-    return {"msg": "Concluído, mas não há mais desafios para criar"}
+        return {
+            "msg": "Exercício concluído e novo exercício ativado",
+            "exercicio_concluido": exercicio.id,
+            "novo_exercicio": novo_exercicio.id
+        }
+    
+    db.commit()
+    return {
+        "msg": "Exercício concluído",
+        "exercicio_concluido": exercicio.id
+    }
