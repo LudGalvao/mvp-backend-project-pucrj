@@ -5,11 +5,12 @@ from models.exercicios import Exercicios
 from models.exercicios_historico import Exercicios_historicos
 from database.session import get_db
 from datetime import datetime
+from routes.exercicios import criar_exercicio_automaticamente
 
 router = APIRouter()
 
 @router.patch("/exercicios/concluir/{id}")
-def concluir_exercicio(id: int, db: Session = Depends(get_db)):
+async def concluir_exercicio(id: int, db: Session = Depends(get_db)):
     # Busca o exercício ativo
     exercicio = db.query(Exercicios).filter(Exercicios.id == id, Exercicios.exercicio_ativo == True).first()
     if not exercicio:
@@ -26,24 +27,18 @@ def concluir_exercicio(id: int, db: Session = Depends(get_db)):
     )
     db.add(historico)
     
-    # Busca um novo exercício aleatório que não esteja ativo
-    novo_exercicio = db.query(Exercicios).filter(
-        Exercicios.exercicio_ativo == False,
-        Exercicios.id != id  # Evita selecionar o mesmo exercício
-    ).order_by(func.random()).first()
-    
-    if novo_exercicio:
-        # Marca o novo exercício como ativo
-        novo_exercicio.exercicio_ativo = True
-        db.commit()
-        return {
-            "msg": "Exercício concluído e novo exercício ativado",
-            "exercicio_concluido": exercicio.id,
-            "novo_exercicio": novo_exercicio.id
-        }
-    
+    # Persiste as mudanças antes de gerar um novo exercício
     db.commit()
+    db.refresh(exercicio)
+    
+    # Gera um novo exercício automaticamente
+    try:
+        novo_exercicio_gerado = await criar_exercicio_automaticamente(db)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao gerar novo exercício: {str(e)}")
+    
     return {
-        "msg": "Exercício concluído",
-        "exercicio_concluido": exercicio.id
+        "msg": "Exercício concluído e um novo exercício gerado",
+        "exercicio_concluido": exercicio.id,
+        "novo_exercicio_gerado": novo_exercicio_gerado.id
     }
