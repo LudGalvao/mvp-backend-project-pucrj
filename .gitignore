@@ -47,3 +47,4 @@ logs/
 htmlcov/
 .pytest_cache/
 .tox/
+*.json

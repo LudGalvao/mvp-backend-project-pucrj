@@ -9,12 +9,14 @@ import random
 from utils.ia import gerar_descricao_exercicio
 import asyncio
 from typing import List
+import time
 
 router = APIRouter()
 
 @router.post("/exercicios/automatico", response_model=ExercicioOut)
 async def criar_exercicio_automaticamente(db: Session = Depends(get_db)):
     try:
+        tempo_inicio = time.time()
         nome = random.choice(EXERCICIOS_PERMITIDOS)
         
         # Executa as chamadas em paralelo com timeout
@@ -39,6 +41,11 @@ async def criar_exercicio_automaticamente(db: Session = Depends(get_db)):
         db.add(novo)
         db.commit()
         db.refresh(novo)
+        
+        tempo_fim = time.time()
+        tempo_total = tempo_fim - tempo_inicio
+        print(f"Tempo total para gerar exercício: {tempo_total:.2f} segundos")
+        
         return novo
     except asyncio.TimeoutError:
         raise HTTPException(status_code=504, detail="Tempo limite excedido ao gerar exercício")
