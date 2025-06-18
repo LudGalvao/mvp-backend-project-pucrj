@@ -10,6 +10,7 @@ from utils.ia import gerar_descricao_exercicio
 import asyncio
 from typing import List
 import time
+from utils.ia import gerar_passo_a_passo_exercicio
 
 router = APIRouter()
 
@@ -23,9 +24,10 @@ async def criar_exercicio_automaticamente(db: Session = Depends(get_db)):
         async with asyncio.timeout(30):  # 30 segundos de timeout
             descricao_task = gerar_descricao_exercicio(nome)
             vantagens_task = gerar_vantagens_exercicio(nome, "")
+            passo_a_passo_task = gerar_passo_a_passo_exercicio(nome)
             
-            # Aguarda ambas as chamadas
-            descricao, vantagens = await asyncio.gather(descricao_task, vantagens_task)
+            # Aguarda todas as chamadas
+            descricao, vantagens, passo_a_passo = await asyncio.gather(descricao_task, vantagens_task, passo_a_passo_task)
         
         # Atualiza as vantagens com a descrição correta se necessário
         if not vantagens:
@@ -36,6 +38,7 @@ async def criar_exercicio_automaticamente(db: Session = Depends(get_db)):
             nome=nome,
             descricao=descricao,
             vantagens=vantagens,
+            passo_a_passo=passo_a_passo,
             exercicio_ativo=True
         )
         db.add(novo)
@@ -70,3 +73,10 @@ def atualizar_exercicio(id: int, exercicio: ExercicioUpdate, db: Session = Depen
 @router.get("/exercicios_permitidos")
 def listar_exercicios_permitidos():
     return EXERCICIOS_PERMITIDOS
+
+@router.get("/exercicios/{id}", response_model=ExercicioOut)
+def get_exercicio(id: int, db: Session = Depends(get_db)):
+    obj = db.query(Exercicios).filter(Exercicios.id == id).first()
+    if not obj:
+        raise HTTPException(status_code=404, detail="Exercício não encontrado")
+    return obj
