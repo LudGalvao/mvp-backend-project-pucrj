@@ -95,3 +95,33 @@ async def gerar_descricao_exercicio(nome: str) -> str:
     save_cache(_exercicios_cache)
     
     return resultado
+
+async def gerar_passo_a_passo_exercicio(nome: str) -> str:
+    # Verifica cache
+    cache_key = f"{nome}_passo_a_passo"
+    cached_value = get_cached_value(cache_key)
+    if cached_value:
+        return cached_value
+
+    prompt = f"Forneça um passo a passo simples, em 3 etapas curtas e objetivas, para realizar o exercício '{nome}'. Liste cada etapa numerada."
+    url = "https://openrouter.ai/api/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "model": "mistralai/mistral-nemo",
+        "messages": [
+            {"role": "system", "content": "Especialista em educação física. Respostas curtas, passo a passo simples e numerado."},
+            {"role": "user", "content": prompt}
+        ],
+        "max_tokens": 120
+    }
+    response = await http_client.post(url, json=data, headers=headers)
+    response.raise_for_status()
+    resposta = response.json()
+    resultado = resposta["choices"][0]["message"]["content"].strip()
+    # Salva no cache
+    _exercicios_cache[cache_key] = resultado
+    save_cache(_exercicios_cache)
+    return resultado
