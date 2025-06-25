@@ -8,4 +8,4 @@ class ExercicioHistoricoOut(BaseModel):
     data_conclusao: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
