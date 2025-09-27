@@ -1,4 +1,4 @@
-##Sobre o Projeto
+# Sobre o Projeto
 
 Sistema completo de gerenciamento de usuários e geração de exercícios personalizados utilizando **Flask** e **Inteligência Artificial**. O projeto foi desenvolvido para atender aos requisitos da disciplina PUC-RJ, implementando uma API robusta com interface web moderna e integração com IA para personalização de exercícios.
 
