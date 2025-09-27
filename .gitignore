@@ -26,9 +26,11 @@ env/
 ENV/
 .env
 
-# Arquivos do SQLite
+# Arquivos do SQLite e banco de dados
 *.sqlite3
 *.sqlite
+*.db
+instance/
 
 # IDEs e editores
 .idea/
