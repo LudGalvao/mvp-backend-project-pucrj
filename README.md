@@ -4,6 +4,51 @@
 
 Sistema completo de gerenciamento de usuários e geração de exercícios personalizados utilizando **Flask** e **Inteligência Artificial**. O projeto foi desenvolvido para atender aos requisitos da disciplina PUC-RJ, implementando uma API robusta com interface web moderna e integração com IA para personalização de exercícios.
 
+## 🔧 Instalação e Configuração
+
+### Pré-requisitos
+- Python 3.8+
+- pip (gerenciador de pacotes Python)
+
+### Passo a Passo
+
+1. **Clone o repositório:**
+```bash
+git clone <repository-url>
+cd mvp-backend-project-pucrj
+```
+
+2. **Instale as dependências:**
+```bash
+pip install -r requirements.txt
+```
+
+3. **Configure variáveis de ambiente (opcional):**
+```bash
+# Crie um arquivo .env
+echo "OPENROUTER_API_KEY=sua_chave_aqui" > .env
+```
+
+4. **Execute a aplicação:**
+```bash
+python app.py
+```
+
+5. **Acesse a aplicação:**
+- **Frontend:** http://localhost:5000
+- **Swagger UI:** http://localhost:5000/swagger
+
+## 📖 Documentação da API
+
+A documentação completa está disponível através do **Swagger UI** em `/swagger`. Inclui:
+
+- ✅ Descrição detalhada de cada endpoint
+- ✅ Estrutura de requisição e resposta
+- ✅ Códigos de status HTTP
+- ✅ Exemplos práticos de uso
+- ✅ Testes interativos da API
+
+
 ## 🎯 Objetivo
 
 Criar uma aplicação web que permita:
@@ -260,51 +305,7 @@ Retorna estatísticas gerais do sistema.
 - **Link direto** para Swagger UI
 - **Lista de endpoints** disponíveis
 - **Exemplos de uso** da API
-
-## 🔧 Instalação e Configuração
-
-### Pré-requisitos
-- Python 3.8+
-- pip (gerenciador de pacotes Python)
-
-### Passo a Passo
-
-1. **Clone o repositório:**
-```bash
-git clone <repository-url>
-cd mvp-backend-project-pucrj
-```
-
-2. **Instale as dependências:**
-```bash
-pip install -r requirements.txt
-```
-
-3. **Configure variáveis de ambiente (opcional):**
-```bash
-# Crie um arquivo .env
-echo "OPENROUTER_API_KEY=sua_chave_aqui" > .env
-```
-
-4. **Execute a aplicação:**
-```bash
-python app.py
-```
-
-5. **Acesse a aplicação:**
-- **Frontend:** http://localhost:5000
-- **Swagger UI:** http://localhost:5000/swagger
-
-## 📖 Documentação da API
-
-A documentação completa está disponível através do **Swagger UI** em `/swagger`. Inclui:
-
-- ✅ Descrição detalhada de cada endpoint
-- ✅ Estrutura de requisição e resposta
-- ✅ Códigos de status HTTP
-- ✅ Exemplos práticos de uso
-- ✅ Testes interativos da API
-
+- 
 ## 🎯 Funcionalidades Especiais
 
 ### 🤖 Integração com IA
