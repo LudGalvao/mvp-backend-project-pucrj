@@ -1,10 +1,8 @@
-# 🏋️ Fitness App - Sistema de Usuários e Exercícios com IA
-
-## 📋 Sobre o Projeto
+##Sobre o Projeto
 
 Sistema completo de gerenciamento de usuários e geração de exercícios personalizados utilizando **Flask** e **Inteligência Artificial**. O projeto foi desenvolvido para atender aos requisitos da disciplina PUC-RJ, implementando uma API robusta com interface web moderna e integração com IA para personalização de exercícios.
 
-## 🔧 Instalação e Configuração
+## Instalação e Configuração
 
 ### Pré-requisitos
 - Python 3.8+
@@ -49,7 +47,7 @@ A documentação completa está disponível através do **Swagger UI** em `/swag
 - ✅ Testes interativos da API
 
 
-## 🎯 Objetivo
+## Objetivo
 
 Criar uma aplicação web que permita:
 - Gerenciamento completo de usuários
@@ -58,16 +56,16 @@ Criar uma aplicação web que permita:
 - Documentação completa da API
 - Sistema de níveis de experiência
 
-## 🚀 Funcionalidades Principais
+## Funcionalidades Principais
 
-### 👥 Gerenciamento de Usuários
+###  Gerenciamento de Usuários
 - **Cadastro de usuários** com informações completas
 - **Busca de usuários** por nome
 - **Listagem de usuários** com filtros
 - **Exclusão de usuários** e seus dados relacionados
 - **Sistema de níveis**: Iniciante, Intermediário, Avançado
 
-### 🏃 Sistema de Exercícios
+### Sistema de Exercícios
 - **Geração automática** de exercícios usando IA (OpenRouter)
 - **Personalização** baseada no nível do usuário
 - **Controle de progresso** (exercícios concluídos/pendentes)
@@ -80,7 +78,7 @@ Criar uma aplicação web que permita:
 - **Distribuição por níveis** de experiência
 - **Taxa de conclusão** de exercícios
 
-## 🛠️ Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 ### Backend
 - **Flask 2.3.3** - Framework web Python
