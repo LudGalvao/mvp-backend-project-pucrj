@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness App - Sistema de Usuários e Exercícios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-container {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            margin: 20px auto;
+            padding: 30px;
+            max-width: 1200px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 25px;
+            background: linear-gradient(45deg, #6c757d, #495057);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .nav-tabs {
+            border-bottom: 2px solid #dee2e6;
+            margin-bottom: 30px;
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            border-radius: 8px 8px 0 0;
+            margin-right: 5px;
+            background: #f8f9fa;
+            color: #6c757d;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: #495057;
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        .nav-tabs .nav-link:hover {
+            background: #6c757d;
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        .card {
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        
+        .card-header {
+            background: linear-gradient(45deg, #495057, #6c757d);
+            color: white;
+            border-radius: 12px 12px 0 0 !important;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #495057, #6c757d);
+            border: none;
+            border-radius: 20px;
+            padding: 10px 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #343a40, #495057);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border: none;
+            border-radius: 18px;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(45deg, #dc3545, #e74c3c);
+            border: none;
+            border-radius: 18px;
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #6c757d;
+            box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
+        }
+        
+        .user-card {
+            background: linear-gradient(135deg, #e9ecef 0%, #f8f9fa 100%);
+            color: #495057;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .user-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border-color: #adb5bd;
+        }
+        
+        .exercise-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #495057;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .exercise-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border-color: #adb5bd;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #495057;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 10px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #6c757d;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+        
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+        }
+        
+        .modal-header {
+            background: linear-gradient(45deg, #495057, #6c757d);
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .level-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.75em;
+            font-weight: 500;
+        }
+        
+        .level-iniciante { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .level-intermediario { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .level-avancado { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        
+        .exercise-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.75em;
+            font-weight: 500;
+        }
+        
+        .status-pendente { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
+        .status-concluido { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="main-container">
+            <!-- Header -->
+            <div class="header">
+                <h1><i class="fas fa-dumbbell"></i> Fitness App</h1>
+                <p class="mb-0">Sistema de Usuários e Exercícios Personalizados com IA</p>
+                <small>PUC-RJ MVP - Desenvolvido com Flask e IA</small>
+            </div>
+            
+            <!-- Navigation Tabs -->
+            <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="usuarios-tab" data-bs-toggle="tab" data-bs-target="#usuarios" type="button" role="tab">
+                        <i class="fas fa-users"></i> Usuários
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="exercicios-tab" data-bs-toggle="tab" data-bs-target="#exercicios" type="button" role="tab">
+                        <i class="fas fa-running"></i> Exercícios
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="estatisticas-tab" data-bs-toggle="tab" data-bs-target="#estatisticas" type="button" role="tab">
+                        <i class="fas fa-chart-bar"></i> Estatísticas
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="api-tab" data-bs-toggle="tab" data-bs-target="#api" type="button" role="tab">
+                        <i class="fas fa-code"></i> API Docs
+                    </button>
+                </li>
+            </ul>
+            
+            <!-- Tab Content -->
+            <div class="tab-content" id="mainTabContent">
+                <!-- Usuários Tab -->
+                <div class="tab-pane fade show active" id="usuarios" role="tabpanel">
+                    <div class="row">
+                        <!-- Cadastro de Usuário -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-user-plus"></i> Cadastrar Novo Usuário</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="userForm">
+                                        <div class="mb-3">
+                                            <label class="form-label">Nome Completo</label>
+                                            <input type="text" class="form-control" id="nome" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="email" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Idade</label>
+                                            <input type="number" class="form-control" id="idade" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Peso (kg)</label>
+                                            <input type="number" step="0.1" class="form-control" id="peso">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Altura (m)</label>
+                                            <input type="number" step="0.01" class="form-control" id="altura">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Nível de Experiência</label>
+                                            <select class="form-control" id="nivel_experiencia">
+                                                <option value="iniciante">Iniciante</option>
+                                                <option value="intermediario">Intermediário</option>
+                                                <option value="avancado">Avançado</option>
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="fas fa-save"></i> Cadastrar Usuário
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Busca de Usuário -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-search"></i> Buscar Usuário</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="searchUserForm">
+                                        <div class="mb-3">
+                                            <label class="form-label">Nome do Usuário</label>
+                                            <input type="text" class="form-control" id="userName" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="fas fa-search"></i> Buscar
+                                        </button>
+                                    </form>
+                                    
+                                    <div id="userDetails" class="mt-3" style="display: none;">
+                                        <!-- Detalhes do usuário aparecerão aqui -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Lista de Usuários -->
+                    <div class="card mt-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5><i class="fas fa-list"></i> Lista de Usuários</h5>
+                            <button class="btn btn-success" onclick="loadUsers()">
+                                <i class="fas fa-refresh"></i> Atualizar
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="loading" id="usersLoading">
+                                <div class="spinner"></div>
+                                <p>Carregando usuários...</p>
+                            </div>
+                            <div id="usersList" class="row">
+                                <!-- Lista de usuários aparecerá aqui -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Exercícios Tab -->
+                <div class="tab-pane fade" id="exercicios" role="tabpanel">
+                    <div class="row">
+                        <!-- Gerar Exercício -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-magic"></i> Gerar Exercício com IA</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="exerciseForm">
+                                        <div class="mb-3">
+                                            <label class="form-label">Nome do Usuário</label>
+                                            <input type="text" class="form-control" id="exerciseUserName" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Nome do Exercício (opcional)</label>
+                                            <select class="form-control" id="exerciseName">
+                                                <option value="">Exercício Aleatório</option>
+                                                <option value="Polichinelo">Polichinelo</option>
+                                                <option value="Agachamento livre">Agachamento livre</option>
+                                                <option value="Prancha">Prancha</option>
+                                                <option value="Flexão de braço">Flexão de braço</option>
+                                                <option value="Abdominal">Abdominal</option>
+                                                <option value="Caminhada">Caminhada</option>
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="fas fa-magic"></i> Gerar Exercício
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Exercícios do Usuário -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-list-alt"></i> Exercícios do Usuário</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="userExercisesForm">
+                                        <div class="mb-3">
+                                            <label class="form-label">Nome do Usuário</label>
+                                            <input type="text" class="form-control" id="userExercisesName" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="fas fa-search"></i> Buscar Exercícios
+                                        </button>
+                                    </form>
+                                    
+                                    <div id="userExercisesList" class="mt-3">
+                                        <!-- Lista de exercícios aparecerá aqui -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Estatísticas Tab -->
+                <div class="tab-pane fade" id="estatisticas" role="tabpanel">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-chart-bar"></i> Estatísticas Gerais</h5>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary mb-3" onclick="loadStats()">
+                                <i class="fas fa-refresh"></i> Atualizar Estatísticas
+                            </button>
+                            <div id="statsContent" class="row">
+                                <!-- Estatísticas aparecerão aqui -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- API Documentation Tab -->
+                <div class="tab-pane fade" id="api" role="tabpanel">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-code"></i> Documentação da API</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <h6><i class="fas fa-info-circle"></i> Documentação Swagger</h6>
+                                <p>Acesse a documentação completa da API através do Swagger UI:</p>
+                                <a href="/swagger" target="_blank" class="btn btn-primary">
+                                    <i class="fas fa-external-link-alt"></i> Abrir Swagger UI
+                                </a>
+                            </div>
+                            
+                            <h6>Endpoints Disponíveis:</h6>
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <strong>POST /api/cadastrar_usuario</strong> - Cadastra um novo usuário
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>GET /api/buscar_usuario/{id}</strong> - Busca usuário por ID
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>GET /api/buscar_usuarios</strong> - Lista todos os usuários
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>DELETE /api/deletar_usuario/{id}</strong> - Deleta um usuário
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>POST /api/gerar_exercicio_personalizado/{id}</strong> - Gera exercício com IA
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>GET /api/exercicios_usuario/{id}</strong> - Lista exercícios do usuário
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>PATCH /api/concluir_exercicio/{id}</strong> - Marca exercício como concluído
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>GET /api/estatisticas</strong> - Estatísticas gerais do sistema
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loading Overlay -->
+            <div class="loading" id="globalLoading">
+                <div class="spinner"></div>
+                <p>Processando...</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Main JavaScript -->
+    <script>
+        // Configuração da API
+        const API_BASE = '';
+        
+        // Utilitários
+        function showLoading(elementId) {
+            document.getElementById(elementId).style.display = 'block';
+        }
+        
+        function hideLoading(elementId) {
+            document.getElementById(elementId).style.display = 'none';
+        }
+        
+        function showAlert(message, type = 'success') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            const container = document.querySelector('.main-container');
+            container.insertBefore(alertDiv, container.firstChild);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+        
+        // Cadastro de Usuário
+        document.getElementById('userForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                nome: document.getElementById('nome').value,
+                email: document.getElementById('email').value,
+                idade: parseInt(document.getElementById('idade').value),
+                peso: parseFloat(document.getElementById('peso').value) || null,
+                altura: parseFloat(document.getElementById('altura').value) || null,
+                nivel_experiencia: document.getElementById('nivel_experiencia').value
+            };
+            
+            try {
+                showLoading('globalLoading');
+                
+                const response = await fetch('/api/cadastrar_usuario', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showAlert(`Usuário ${result.usuario.nome} cadastrado com sucesso! ID: ${result.usuario.id}`);
+                    document.getElementById('userForm').reset();
+                    loadUsers(); // Atualizar lista
+                } else {
+                    showAlert(result.error, 'danger');
+                }
+            } catch (error) {
+                showAlert('Erro ao cadastrar usuário: ' + error.message, 'danger');
+            } finally {
+                hideLoading('globalLoading');
+            }
+        });
+        
+        // Busca de Usuário
+        document.getElementById('searchUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userName = document.getElementById('userName').value;
+            
+            try {
+                showLoading('globalLoading');
+                
+                const response = await fetch(`/api/buscar_usuario/${encodeURIComponent(userName)}`);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displayUserDetails(result);
+                } else {
+                    showAlert(result.error, 'danger');
+                    document.getElementById('userDetails').style.display = 'none';
+                }
+            } catch (error) {
+                showAlert('Erro ao buscar usuário: ' + error.message, 'danger');
+            } finally {
+                hideLoading('globalLoading');
+            }
+        });
+        
+        function displayUserDetails(data) {
+            const userDetailsDiv = document.getElementById('userDetails');
+            const user = data.usuario;
+            const stats = data.estatisticas;
+            
+            userDetailsDiv.innerHTML = `
+                <div class="user-card">
+                    <h6><i class="fas fa-user"></i> ${user.nome}</h6>
+                    <p><strong>Email:</strong> ${user.email}</p>
+                    <p><strong>Idade:</strong> ${user.idade} anos</p>
+                    ${user.peso ? `<p><strong>Peso:</strong> ${user.peso} kg</p>` : ''}
+                    ${user.altura ? `<p><strong>Altura:</strong> ${user.altura} m</p>` : ''}
+                    <p><strong>Nível:</strong> <span class="level-badge level-${user.nivel_experiencia}">${user.nivel_experiencia}</span></p>
+                    <p><strong>Total de Exercícios:</strong> ${stats.total_exercicios}</p>
+                    <p><strong>Exercícios Concluídos:</strong> ${stats.exercicios_concluidos}</p>
+                    <p><strong>Dias Cadastrado:</strong> ${stats.dias_cadastrado}</p>
+                    <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.nome}')">
+                        <i class="fas fa-trash"></i> Deletar
+                    </button>
+                </div>
+            `;
+            userDetailsDiv.style.display = 'block';
+        }
+        
+        // Carregar Lista de Usuários
+        async function loadUsers() {
+            try {
+                showLoading('usersLoading');
+                
+                const response = await fetch('/api/buscar_usuarios');
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displayUsersList(result.usuarios);
+                } else {
+                    showAlert(result.error, 'danger');
+                }
+            } catch (error) {
+                showAlert('Erro ao carregar usuários: ' + error.message, 'danger');
+            } finally {
+                hideLoading('usersLoading');
+            }
+        }
+        
+        function displayUsersList(users) {
+            const usersListDiv = document.getElementById('usersList');
+            
+            if (users.length === 0) {
+                usersListDiv.innerHTML = '<p class="text-center text-muted">Nenhum usuário cadastrado</p>';
+                return;
+            }
+            
+            usersListDiv.innerHTML = users.map(user => `
+                <div class="col-md-6 col-lg-4">
+                    <div class="user-card">
+                        <h6><i class="fas fa-user"></i> ${user.nome}</h6>
+                        <p><strong>ID:</strong> ${user.id}</p>
+                        <p><strong>Email:</strong> ${user.email}</p>
+                        <p><strong>Idade:</strong> ${user.idade} anos</p>
+                        <p><strong>Nível:</strong> <span class="level-badge level-${user.nivel_experiencia}">${user.nivel_experiencia}</span></p>
+                        <p><strong>Exercícios:</strong> ${user.total_exercicios}</p>
+                        <button class="btn btn-primary btn-sm" onclick="generateExercise('${user.nome}')">
+                            <i class="fas fa-magic"></i> Gerar Exercício
+                        </button>
+                        <button class="btn btn-danger btn-sm ms-2" onclick="deleteUser('${user.nome}')">
+                            <i class="fas fa-trash"></i> Deletar
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Deletar Usuário
+        async function deleteUser(userName) {
+            if (!confirm('Tem certeza que deseja deletar este usuário?')) {
+                return;
+            }
+            
+            try {
+                showLoading('globalLoading');
+                
+                const response = await fetch(`/api/deletar_usuario/${encodeURIComponent(userName)}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showAlert(result.message);
+                    loadUsers(); // Atualizar lista
+                    document.getElementById('userDetails').style.display = 'none';
+                } else {
+                    showAlert(result.error, 'danger');
+                }
+            } catch (error) {
+                showAlert('Erro ao deletar usuário: ' + error.message, 'danger');
+            } finally {
+                hideLoading('globalLoading');
+            }
+        }
+        
+        // Gerar Exercício
+        document.getElementById('exerciseForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userName = document.getElementById('exerciseUserName').value;
+            const exerciseName = document.getElementById('exerciseName').value;
+            
+            try {
+                showLoading('globalLoading');
+                
+                const response = await fetch(`/api/gerar_exercicio_personalizado/${encodeURIComponent(userName)}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nome_exercicio: exerciseName })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showAlert(result.mensagem);
+                    document.getElementById('exerciseForm').reset();
+                } else {
+                    showAlert(result.error, 'danger');
+                }
+            } catch (error) {
+                showAlert('Erro ao gerar exercício: ' + error.message, 'danger');
+            } finally {
+                hideLoading('globalLoading');
+            }
+        });
+        
+        // Buscar Exercícios do Usuário
+        document.getElementById('userExercisesForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userName = document.getElementById('userExercisesName').value;
+            
+            try {
+                showLoading('globalLoading');
+                
+                const response = await fetch(`/api/exercicios_usuario/${encodeURIComponent(userName)}`);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displayUserExercises(result.exercicios);
+                } else {
+                    showAlert(result.error, 'danger');
+                }
+            } catch (error) {
+                showAlert('Erro ao buscar exercícios: ' + error.message, 'danger');
+            } finally {
+                hideLoading('globalLoading');
+            }
+        });
+        
+        function displayUserExercises(exercises) {
+            const exercisesListDiv = document.getElementById('userExercisesList');
+            
+            if (exercises.length === 0) {
+                exercisesListDiv.innerHTML = '<p class="text-center text-muted">Nenhum exercício encontrado</p>';
+                return;
+            }
+            
+            exercisesListDiv.innerHTML = exercises.map(exercise => `
+                <div class="exercise-card">
+                    <h6><i class="fas fa-running"></i> ${exercise.nome}</h6>
+                    <p><strong>Descrição:</strong> ${exercise.descricao}</p>
+                    <p><strong>Vantagens:</strong> ${exercise.vantagens}</p>
+                    <p><strong>Passo a Passo:</strong> ${exercise.passo_a_passo}</p>
+                    <p><strong>Status:</strong> <span class="exercise-status ${exercise.concluido ? 'status-concluido' : 'status-pendente'}">
+                        ${exercise.concluido ? 'Concluído' : 'Pendente'}
+                    </span></p>
+                    ${!exercise.concluido ? `
+                        <button class="btn btn-success btn-sm" onclick="completeExercise(${exercise.id})">
+                            <i class="fas fa-check"></i> Marcar como Concluído
+                        </button>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+        
+        // Concluir Exercício
+        async function completeExercise(exerciseId) {
+            try {
+                showLoading('globalLoading');
+                
+                const response = await fetch(`/api/concluir_exercicio/${exerciseId}`, {
+                    method: 'PATCH'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showAlert(result.message);
+                    // Atualizar lista de exercícios se estiver visível
+                    const userName = document.getElementById('userExercisesName').value;
+                    if (userName) {
+                        document.getElementById('userExercisesForm').dispatchEvent(new Event('submit'));
+                    }
+                } else {
+                    showAlert(result.error, 'danger');
+                }
+            } catch (error) {
+                showAlert('Erro ao concluir exercício: ' + error.message, 'danger');
+            } finally {
+                hideLoading('globalLoading');
+            }
+        }
+        
+        // Gerar Exercício (função auxiliar)
+        async function generateExercise(userName) {
+            try {
+                showLoading('globalLoading');
+                
+                const response = await fetch(`/api/gerar_exercicio_personalizado/${encodeURIComponent(userName)}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showAlert(result.mensagem);
+                    loadUsers(); // Atualizar lista
+                } else {
+                    showAlert(result.error, 'danger');
+                }
+            } catch (error) {
+                showAlert('Erro ao gerar exercício: ' + error.message, 'danger');
+            } finally {
+                hideLoading('globalLoading');
+            }
+        }
+        
+        // Carregar Estatísticas
+        async function loadStats() {
+            try {
+                showLoading('globalLoading');
+                
+                const response = await fetch('/api/estatisticas');
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displayStats(result);
+                } else {
+                    showAlert(result.error, 'danger');
+                }
+            } catch (error) {
+                showAlert('Erro ao carregar estatísticas: ' + error.message, 'danger');
+            } finally {
+                hideLoading('globalLoading');
+            }
+        }
+        
+        function displayStats(stats) {
+            const statsContentDiv = document.getElementById('statsContent');
+            
+            statsContentDiv.innerHTML = `
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <h4 style="color: #6c757d;"><i class="fas fa-users"></i></h4>
+                        <h3 style="color: #495057;">${stats.total_usuarios}</h3>
+                        <p style="color: #6c757d;">Total de Usuários</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <h4 style="color: #6c757d;"><i class="fas fa-running"></i></h4>
+                        <h3 style="color: #495057;">${stats.total_exercicios}</h3>
+                        <p style="color: #6c757d;">Total de Exercícios</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <h4 style="color: #6c757d;"><i class="fas fa-check-circle"></i></h4>
+                        <h3 style="color: #495057;">${stats.exercicios_concluidos}</h3>
+                        <p style="color: #6c757d;">Exercícios Concluídos</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <h4 style="color: #6c757d;"><i class="fas fa-chart-pie"></i></h4>
+                        <h3 style="color: #495057;">${Math.round((stats.exercicios_concluidos / Math.max(stats.total_exercicios, 1)) * 100)}%</h3>
+                        <p style="color: #6c757d;">Taxa de Conclusão</p>
+                    </div>
+                </div>
+                <div class="col-12 mt-4">
+                    <h5 style="color: #495057;">Usuários por Nível:</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="stats-card">
+                                <h4 style="color: #28a745;"><i class="fas fa-seedling"></i></h4>
+                                <h3 style="color: #495057;">${stats.usuarios_por_nivel.iniciante || 0}</h3>
+                                <p style="color: #6c757d;">Iniciantes</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stats-card">
+                                <h4 style="color: #ffc107;"><i class="fas fa-fire"></i></h4>
+                                <h3 style="color: #495057;">${stats.usuarios_por_nivel.intermediario || 0}</h3>
+                                <p style="color: #6c757d;">Intermediários</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stats-card">
+                                <h4 style="color: #dc3545;"><i class="fas fa-trophy"></i></h4>
+                                <h3 style="color: #495057;">${stats.usuarios_por_nivel.avancado || 0}</h3>
+                                <p style="color: #6c757d;">Avançados</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUsers();
+            loadStats();
+        });
+    </script>
+</body>
+</html>
